@@ -1,0 +1,64 @@
+{% extends "FlowcodeDashboardBundle:Default:layout.html.twig" %}
+
+{% block title %}{{ '%entity% list'|trans({'%entity%': 'SocialNetwork'}, 'SocialNetwork') }} - {{ parent() }}{% endblock %}
+{% macro thead(name, field, label) %}
+    {% spaceless %}
+        {% set sort = app.session.get('sort.' ~ name) %}
+        {% if sort and sort.field == field %}
+            {% if sort.type == 'DESC' %}
+                <a href="{{ path('admin_socialnetwork_sort', {field: field, type: 'ASC'}) }}">{{ label | trans({},'SocialNetwork')}} <i class="fa fa-sort-down"></i></a>
+            {% elseif sort.type == 'ASC' %}
+                <a href="{{ path('admin_socialnetwork_sort', {field: field, type: 'DESC'}) }}">{{ label | trans({},'SocialNetwork')}} <i class="fa fa-sort-up"></i></a>
+            {% endif %}
+        {% else %}
+            <a href="{{ path('admin_socialnetwork_sort', {field: field, type: 'ASC'}) }}">{{ label | trans({},'SocialNetwork')}} <i class="fa fa-sort"></i></a>
+        {% endif %}
+    {% endspaceless %}
+{% endmacro %}
+
+{% from _self import thead %}
+
+
+{% block body %}
+    <section class="content-header">
+        <h1>
+            {{ '%entity% list'|trans({'%entity%': 'SocialNetwork'}, 'SocialNetwork') }}
+        </h1>
+    </section>
+    <section class="content">    
+        <div class="box">
+            <div class="box-header">
+                <div class="box-tools pull-right">                    <a class="btn btn-link btn-sm" href={{ path('admin_socialnetwork_new') }}>
+                        <i class="fa fa-plus"></i> {{ 'Create a new %entity%'|trans({'%entity%': 'SocialNetwork'}, 'SocialNetwork') }}
+                    </a>
+                            </div>
+            </div>
+            <div class="box-body">    
+            <table class="table table-hover records_list table-condensed">
+                <thead>
+                    <tr>                        <th scope="col">{{ thead('socialnetwork', 'name', 'Name') }}</th>                        <th scope="col">{{ thead('socialnetwork', 'description', 'Description') }}</th>                        <th scope="col">{{ thead('socialnetwork', 'clientId', 'Clientid') }}</th>                        <th scope="col">{{ thead('socialnetwork', 'clientSecret', 'Clientsecret') }}</th>                        <th scope="col">{{ thead('socialnetwork', 'loginEnabled', 'Loginenabled') }}</th>                        <th scope="col">{{ thead('socialnetwork', 'enabled', 'Enabled') }}</th>                    </tr>
+                </thead>
+                <tbody>
+                    {% for socialnetwork in paginator %}
+                        <tr>
+                                                             
+                                <td><a href="{{ path('admin_socialnetwork_show', {id: socialnetwork.id}) }}">{{ socialnetwork.name }}</a></td>
+                                <td>{{ socialnetwork.description }}</td>
+                                <td>{{ socialnetwork.clientId }}</td>
+                                <td>{{ socialnetwork.clientSecret }}</td>
+                                <td>{% if socialnetwork.loginEnabled %}<i class="fa fa-check-square-o"></i>{% else %}<i class="fa fa-square-o"></i>{% endif %}</td>
+                                <td>{% if socialnetwork.enabled %}<i class="fa fa-check-square-o"></i>{% else %}<i class="fa fa-square-o"></i>{% endif %}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            
+            {{ knp_pagination_render(paginator) }}
+            </div>
+        <div class="box-footer">
+
+        </div>
+        
+    </section>        
+
+{% endblock %}

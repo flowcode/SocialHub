@@ -1,0 +1,15 @@
+services:
+
+    socialhub_provider_facebook:
+        class: Flowcode\SocialHubBundle\Model\FacebookSocialProvider
+
+    socialhub.repository.socialnetwork:
+            class: Doctrine\ORM\EntityRepository
+            factory_service: doctrine.orm.default_entity_manager
+            factory_method: getRepository
+            arguments:
+                - Flowcode\SocialHubBundle\Entity\SocialNetwork
+
+    socialhub.service.socialnetwork:
+        class: Flowcode\SocialHubBundle\Service\SocialNetworkService
+        arguments: ['@service_container','@socialhub.repository.socialnetwork']

@@ -1,0 +1,19 @@
+{
+  "name": "flowcode/socialhub",
+  "description": "Social integrations plugin for AmulenCMS",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Juan Manuel Aguero",
+      "email": "juanma.aguero@gmail.com"
+    }
+  ],
+  "autoload": {
+    "psr-0": {
+      "": "src/"
+    }
+  },
+  "require": {
+    "facebook/php-sdk-v4": "^5.2"
+  }
+}
