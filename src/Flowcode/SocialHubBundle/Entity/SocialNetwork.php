@@ -216,7 +216,7 @@ class SocialNetwork
     {
         $this->type = $type;
     }
-    
+
 
 }
 

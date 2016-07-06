@@ -2,7 +2,10 @@
 
 namespace Flowcode\SocialHubBundle\Form\Type;
 
+use Flowcode\SocialHubBundle\Model\FacebookSocialProvider;
+use Flowcode\SocialHubBundle\Model\TwitterSocialProvider;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
@@ -15,7 +18,12 @@ class SocialNetworkType extends AbstractType
     {
         $builder
             ->add('name')
-            ->add('type')
+            ->add('type', ChoiceType::class, array(
+                'choices' => array(
+                    FacebookSocialProvider::PROVIDER_TYPE => 'Facebook',
+                    TwitterSocialProvider::PROVIDER_TYPE => 'Twitter',
+                ),
+            ))
             ->add('description')
             ->add('clientId')
             ->add('clientSecret')

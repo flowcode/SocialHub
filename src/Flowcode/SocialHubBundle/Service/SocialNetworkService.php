@@ -29,6 +29,15 @@ class SocialNetworkService
         $this->socialNetworkRepository = $socialNetworkRepository;
     }
 
+    public function getSocialNetwork($type)
+    {
+        $socialNetwork = $this->socialNetworkRepository->findOneBy(array(
+            'type' => $type,
+        ));
+
+        return $socialNetwork;
+    }
+
 
     public function getLoginUrls()
     {
@@ -48,14 +57,16 @@ class SocialNetworkService
         }
 
         $urls = array();
-        foreach ($socialNetworks as $network) {
+        $provider_prefix = "socialhub_provider_";
+        foreach ($socialNetworks as $socialNetwork) {
+            $socialProvider = $this->container->get($provider_prefix . $socialNetwork->getType());
 
-            $socialProvider = $this->container->get($network->getType());
             $loginUrl = $socialProvider->getLoginUrl();
 
             $urls[] = array(
-                'name' => $network->getName(),
-                'type' => "label." . $network->getType(),
+                'name' => $socialNetwork->getName(),
+                'type' => $socialNetwork->getType(),
+                'label' => "label." . $socialNetwork->getType(),
                 'url' => $loginUrl,
             );
         }

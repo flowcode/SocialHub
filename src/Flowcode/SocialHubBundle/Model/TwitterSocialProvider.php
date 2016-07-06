@@ -3,6 +3,7 @@
 namespace Flowcode\SocialHubBundle\Model;
 
 
+use Abraham\TwitterOAuth\TwitterOAuth;
 use Facebook\Exceptions\FacebookResponseException;
 use Facebook\Exceptions\FacebookSDKException;
 use Facebook\Facebook;
@@ -10,13 +11,20 @@ use Flowcode\SocialHubBundle\Entity\SocialNetwork;
 use Flowcode\SocialHubBundle\Model\Exception\SocialProviderNotInitializedException;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-class FacebookSocialProvider implements SocialProvider
+class TwitterSocialProvider implements SocialProvider
 {
 
-    const PROVIDER_TYPE = 'facebook';
+    const PROVIDER_TYPE = 'twitter';
 
     private $config;
-    private $facebookApp;
+    /**
+     * @var TwitterOAuth
+     */
+    private $connection;
+
+    /**
+     * @var string
+     */
     private $baseurl;
 
     /**
@@ -49,13 +57,15 @@ class FacebookSocialProvider implements SocialProvider
      */
     public function getLoginUrl($params = array())
     {
-        $helper = $this->getFBApp()->getRedirectLoginHelper();
+        $request_token = $this->getConnection()->oauth('oauth/request_token', array(
+            'oauth_callback' => $this->container->getParameter("socialhub_host_url") . '/socialhub/connector?type=' . self::PROVIDER_TYPE
+        ));
 
-        //TODO: Config permissions.
-        $permissions = ['email'];
+        $url = $this->getConnection()->url('oauth/authorize', array(
+            'oauth_token' => $request_token['oauth_token'],
+        ));
 
-        $loginUrl = $helper->getLoginUrl($this->container->getParameter("socialhub_host_url") . '/socialhub/connector?type=' . self::PROVIDER_TYPE, $permissions);
-        return $loginUrl;
+        return $url;
     }
 
     /**
@@ -63,30 +73,23 @@ class FacebookSocialProvider implements SocialProvider
      */
     public function getUserProfile($params = array())
     {
-        $accessToken = "";
-        if (isset($params['access_token'])) {
-            $accessToken = $params['access_token'];
-        } else {
-            $accessToken = $this->getAccessToken();
-        }
+        $access_token = $this->getConnection()->oauth("oauth/access_token", array(
+            "oauth_token" => $_GET['oauth_token'],
+            "oauth_verifier" => $_GET['oauth_verifier']
+        ));
 
-        //TODO: Config permissions.
-        try {
-            $response = $this->getFBApp()->get('/me?fields=name,email,first_name,last_name', $accessToken);
-        } catch (FacebookResponseException $e) {
+        $this->getConnection()->setOauthToken($access_token['oauth_token'], $access_token['oauth_token_secret']);
 
-            return null;
-        } catch (FacebookSDKException $e) {
+        $response = $this->getConnection()->get("account/verify_credentials", array(
+            "skip_status" => true,
+            "include_email" => true,
+        ));
 
-            return null;
-        }
-
-        $me = $response->getGraphUser();
         return array(
-            'id' => $me->getId(),
-            'email' => $me->getEmail(),
-            'firstname' => $me->getFirstName(),
-            'lastname' => $me->getLastName(),
+            'id' => $response->id,
+            'email' => $response->screen_name,
+            'firstname' => null,
+            'lastname' => null,
         );
     }
 
@@ -96,20 +99,9 @@ class FacebookSocialProvider implements SocialProvider
      */
     public function getAccessToken($params = array())
     {
-        $helper = $this->getFBApp()->getRedirectLoginHelper();
+        $accessToken = $_GET['oauth_token'];
 
-        try {
-            $accessToken = $helper->getAccessToken();
-        } catch (FacebookResponseException $e) {
-
-            return null;
-        } catch (FacebookSDKException $e) {
-
-            return null;
-        }
-
-        return $accessToken->getValue();
-
+        return $accessToken;
     }
 
     /**
@@ -148,23 +140,26 @@ class FacebookSocialProvider implements SocialProvider
             $this->config = array(
                 'app_id' => $socialNetwork->getClientId(),
                 'app_secret' => $socialNetwork->getClientSecret(),
-                'default_graph_version' => 'v2.6',
-                'persistent_data_handler' => 'session',
             );
         }
     }
 
 
     /**
-     * Get the facebook sdk.
-     * @return Facebook facebook Api isntance.
+     * Get the app sdk.
+     * @return TwitterOAuth isntance.
      */
-    public function getFBApp()
+    public function getConnection()
     {
-        if (is_null($this->facebookApp)) {
-            $this->facebookApp = new Facebook($this->getConfig());
+        if (is_null($this->connection)) {
+            $params = $this->getConfig();
+
+            $this->connection = new TwitterOAuth(
+                $params['app_id'],
+                $params['app_secret']
+            );
         }
-        return $this->facebookApp;
+        return $this->connection;
     }
 
 }

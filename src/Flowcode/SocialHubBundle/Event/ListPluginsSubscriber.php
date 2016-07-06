@@ -1,6 +1,6 @@
 <?php
 
-namespace Flowcode\SocialHubBundle\Bundle\Event;
+namespace Flowcode\SocialHubBundle\Event;
 
 use Flowcode\DashboardBundle\Event\ListPluginsEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;

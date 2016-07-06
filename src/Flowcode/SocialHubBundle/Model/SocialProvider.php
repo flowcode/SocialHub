@@ -3,6 +3,8 @@
 namespace Flowcode\SocialHubBundle\Model;
 
 
+use Flowcode\SocialHubBundle\Entity\SocialNetwork;
+
 interface SocialProvider
 {
 
@@ -28,6 +30,12 @@ interface SocialProvider
      * @return OAuthToken tokenAbstraction.
      */
     public function getAccessToken($params);
+
+    /**
+     * @param SocialNetwork $socialNetwork
+     * @return mixed
+     */
+    public function setupConfig(SocialNetwork $socialNetwork);
 
     /**
      *

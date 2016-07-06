@@ -1,14 +1,23 @@
 services:
 
 
+    # providers start
+    socialhub_provider_facebook:
+        class: Flowcode\SocialHubBundle\Model\FacebookSocialProvider
+        arguments: ['@service_container']
+
+    socialhub_provider_twitter:
+        class: Flowcode\SocialHubBundle\Model\TwitterSocialProvider
+        arguments: ['@service_container']
+
+    # providers end.
+
+
     flowcode.socialhub.listplugins_eventsubscriber:
         class: Flowcode\SocialHubBundle\Event\ListPluginsSubscriber
         arguments: ['@router', '@translator']
         tags:
             - { name: kernel.event_subscriber }
-
-    socialhub_provider_facebook:
-        class: Flowcode\SocialHubBundle\Model\FacebookSocialProvider
 
     socialhub.repository.socialnetwork:
             class: Doctrine\ORM\EntityRepository

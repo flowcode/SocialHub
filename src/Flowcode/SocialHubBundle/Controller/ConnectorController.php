@@ -24,8 +24,8 @@ class ConnectorController extends Controller
     {
 
         $social_provider_id = $request->get('type');
-
-        $socialProvider = $this->get($social_provider_id);
+        $provider_prefix = "socialhub_provider_";
+        $socialProvider = $this->get($provider_prefix . $social_provider_id);
 
         $profile = $socialProvider->getUserProfile();
 
@@ -89,7 +89,7 @@ class ConnectorController extends Controller
         $session = $this->container->get('session');
 
         // FIXME: Configure main firewall.
-        $firewall = 'main';
+        $firewall = $this->getParameter("socialhub_firewall");
 
         $token = new UsernamePasswordToken($user, null, $firewall, array('ROLE_USER'));
         $session->set('_security_' . $firewall, serialize($token));

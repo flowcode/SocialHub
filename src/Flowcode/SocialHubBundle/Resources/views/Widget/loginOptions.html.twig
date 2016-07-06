@@ -1,9 +1,7 @@
-<ul>
-    {% for socialNetwork in networks %}
-        <li>
-            <a href="{{ socialNetwork.url }}" class="btn btn-block btn-lg btn-social btn-facebook">
-                {{ socialNetwork.type|trans }}
-            </a>
-        </li>
-    {% endfor %}
-</ul>
+{% for socialNetwork in networks %}
+    <p>
+        <a href="{{ socialNetwork.url }}" class="btn btn-block btn-lg btn-social btn-{{ socialNetwork.type }}">
+            <span class="fa fa-{{ socialNetwork.type }}"></span> {{ socialNetwork.label|trans }}
+        </a>
+    </p>
+{% endfor %}
