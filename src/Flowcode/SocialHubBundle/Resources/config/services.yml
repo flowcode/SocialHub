@@ -1,5 +1,12 @@
 services:
 
+
+    flowcode.socialhub.listplugins_eventsubscriber:
+        class: Flowcode\SocialHubBundle\Event\ListPluginsSubscriber
+        arguments: ['@router', '@translator']
+        tags:
+            - { name: kernel.event_subscriber }
+
     socialhub_provider_facebook:
         class: Flowcode\SocialHubBundle\Model\FacebookSocialProvider
 
