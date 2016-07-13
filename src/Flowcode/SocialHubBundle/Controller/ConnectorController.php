@@ -80,6 +80,11 @@ class ConnectorController extends Controller
 
         }
 
+        $redirectUrl = $this->getParameter('socialhub_redirect');
+        if ($redirectUrl) {
+            return $this->redirect($this->generateUrl($redirectUrl));
+        }
+
         return $this->redirect($this->generateUrl('homepage'));
     }
 
