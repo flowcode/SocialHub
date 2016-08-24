@@ -82,12 +82,12 @@ class TwitterSocialProvider implements SocialProvider
 
         $response = $this->getConnection()->get("account/verify_credentials", array(
             "skip_status" => true,
-            "include_email" => true,
+            "include_email" => "true",
         ));
 
         return array(
             'id' => $response->id,
-            'email' => $response->screen_name,
+            'email' => (isset($response->email)) ? $response->email : $response->screen_name,
             'firstname' => null,
             'lastname' => null,
         );

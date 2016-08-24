@@ -22,7 +22,7 @@ class ConnectorController extends Controller
      */
     public function indexAction(Request $request)
     {
-
+        $request->getSession()->start();
         $social_provider_id = $request->get('type');
         $provider_prefix = "socialhub_provider_";
         $socialProvider = $this->get($provider_prefix . $social_provider_id);
