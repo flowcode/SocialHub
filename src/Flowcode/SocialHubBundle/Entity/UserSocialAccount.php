@@ -1,5 +1,4 @@
 <?php
-
 namespace Flowcode\SocialHubBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -8,12 +7,13 @@ use Doctrine\ORM\Mapping\ManyToOne;
 
 /**
  * UserSocialAccount
- *
+
  * @ORM\Table(name="sh_user_social_account")
  * @ORM\Entity(repositoryClass="Flowcode\SocialHubBundle\Repository\UserSocialAccountRepository")
  */
 class UserSocialAccount
 {
+
     /**
      * @var int
      *
@@ -24,7 +24,7 @@ class UserSocialAccount
     private $id;
 
     /**
-     * @ManyToOne(targetEntity="Amulen\UserBundle\Entity\User")
+     * @ManyToOne(targetEntity="Flowcode\UserBundle\Entity\UserInterface")
      * @JoinColumn(name="user_id", referencedColumnName="id")
      * */
     private $user;
@@ -60,7 +60,6 @@ class UserSocialAccount
     {
         $this->archived = false;
     }
-
 
     /**
      * Get id
@@ -159,7 +158,4 @@ class UserSocialAccount
     {
         $this->externalId = $externalId;
     }
-
-
 }
-

@@ -1,10 +1,11 @@
 <?php
-
 namespace Flowcode\SocialHubBundle\Service;
 
 use Facebook\Facebook;
-use Flowcode\SocialHubBundle\Repository\SocialNetworkRepository;
 use Symfony\Component\HttpFoundation\Session\Session;
+use Flowcode\SocialHubBundle\Entity\SocialNetwork;
+use Doctrine\ORM\EntityManager;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Class SocialNetworkService
@@ -23,10 +24,11 @@ class SocialNetworkService
      * @param $container
      * @param SocialNetworkRepository $socialNetworkRepository
      */
-    public function __construct($container, SocialNetworkRepository $socialNetworkRepository)
+    public function __construct(EntityManager $em, ContainerInterface $container)
     {
+        $this->em = $em;
         $this->container = $container;
-        $this->socialNetworkRepository = $socialNetworkRepository;
+        $this->socialNetworkRepository = $this->em->getRepository(SocialNetwork::class);
     }
 
     public function getSocialNetwork($type)
@@ -37,7 +39,6 @@ class SocialNetworkService
 
         return $socialNetwork;
     }
-
 
     public function getLoginUrls()
     {
@@ -53,7 +54,7 @@ class SocialNetworkService
                 $session->start();
             }
         } catch (\Exception $e) {
-
+            
         }
 
         $urls = array();
@@ -74,5 +75,4 @@ class SocialNetworkService
 
         return $urls;
     }
-
 }

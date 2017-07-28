@@ -1,7 +1,5 @@
 <?php
-
 namespace Flowcode\SocialHubBundle\Model;
-
 
 use Facebook\Exceptions\FacebookResponseException;
 use Facebook\Exceptions\FacebookSDKException;
@@ -33,14 +31,15 @@ class FacebookSocialProvider implements SocialProvider
         $this->container = $container;
     }
 
-
     /**
      * Check if it is valid or not.
      * @return boolean isvalid.
      */
     public function isValidToken(OAuthToken $oAuthToken)
     {
-        // TODO: Implement isValidToken() method.
+        $oAuth2Client = $this->getFBApp()->getOAuth2Client();
+        $tokenMetadata = $oAuth2Client->debugToken($oAuthToken->getToken());
+        return $tokenMetadata->getIsValid();
     }
 
     /**
@@ -69,15 +68,13 @@ class FacebookSocialProvider implements SocialProvider
         } else {
             $accessToken = $this->getAccessToken();
         }
-
-        //TODO: Config permissions.
         try {
             $response = $this->getFBApp()->get('/me?fields=name,email,first_name,last_name', $accessToken);
         } catch (FacebookResponseException $e) {
-
+            var_dump($e->getMessage());
             return null;
         } catch (FacebookSDKException $e) {
-
+            var_dump($e->getMessage());
             return null;
         }
 
@@ -109,7 +106,6 @@ class FacebookSocialProvider implements SocialProvider
         }
 
         return $accessToken->getValue();
-
     }
 
     /**
@@ -149,11 +145,9 @@ class FacebookSocialProvider implements SocialProvider
                 'app_id' => $socialNetwork->getClientId(),
                 'app_secret' => $socialNetwork->getClientSecret(),
                 'default_graph_version' => 'v2.6',
-                'persistent_data_handler' => 'session',
             );
         }
     }
-
 
     /**
      * Get the facebook sdk.
@@ -166,5 +160,4 @@ class FacebookSocialProvider implements SocialProvider
         }
         return $this->facebookApp;
     }
-
 }

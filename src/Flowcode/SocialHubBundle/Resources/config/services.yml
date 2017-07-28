@@ -18,14 +18,22 @@ services:
         arguments: ['@router', '@translator']
         tags:
             - { name: kernel.event_subscriber }
-
-    socialhub.repository.socialnetwork:
-            class: Doctrine\ORM\EntityRepository
-            factory_service: doctrine.orm.default_entity_manager
-            factory_method: getRepository
-            arguments:
-                - Flowcode\SocialHubBundle\Entity\SocialNetwork
-
+                
     socialhub.service.socialnetwork:
         class: Flowcode\SocialHubBundle\Service\SocialNetworkService
-        arguments: ['@service_container','@socialhub.repository.socialnetwork']
+        arguments:
+          - "@doctrine.orm.entity_manager"
+          - "@service_container"
+    
+    socialhub.service.usersocialaccount:
+        class: Flowcode\SocialHubBundle\Service\UserSocialAccountService
+        arguments:
+          - "@doctrine.orm.entity_manager"
+          - "@service_container"
+          
+    socialhub.service.socialprovider:
+        class: Flowcode\SocialHubBundle\Service\SocialProviderService
+        arguments:
+          - "@doctrine.orm.entity_manager"
+          - "@service_container"
+          
