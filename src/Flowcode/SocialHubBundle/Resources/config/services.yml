@@ -9,7 +9,10 @@ services:
     socialhub_provider_twitter:
         class: Flowcode\SocialHubBundle\Model\TwitterSocialProvider
         arguments: ['@service_container']
-
+    
+    socialhub_provider_google:
+        class: Flowcode\SocialHubBundle\Model\GoogleSocialProvider
+        arguments: ['@service_container']
     # providers end.
 
 

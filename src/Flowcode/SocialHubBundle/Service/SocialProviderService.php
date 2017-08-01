@@ -23,6 +23,10 @@ class SocialProviderService
         if ($socialNetwork == 'facebook') {
             $provider = $this->container->get('socialhub_provider_facebook');
         }
+        if ($socialNetwork == 'google') {
+            $provider = $this->container->get('socialhub_provider_google');
+        }
+
         return $provider;
     }
 
