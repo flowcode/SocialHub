@@ -60,7 +60,7 @@ class FacebookSocialProvider implements SocialProvider
     /**
      * Get the profile of current user.
      */
-    public function getUserProfile($params = array())
+    public function getUserProfile($params = array()): SocialNetworkUserProfile
     {
         $accessToken = "";
         if (isset($params['access_token'])) {
@@ -79,12 +79,14 @@ class FacebookSocialProvider implements SocialProvider
         }
 
         $me = $response->getGraphUser();
-        return array(
-            'id' => $me->getId(),
-            'email' => $me->getEmail(),
-            'firstname' => $me->getFirstName(),
-            'lastname' => $me->getLastName(),
-        );
+
+        $socialNetworkUserProfile = new SocialNetworkUserProfile();
+        $socialNetworkUserProfile->setId($me->getId());
+        $socialNetworkUserProfile->setEmail($me->getEmail());
+        $socialNetworkUserProfile->setFirstname($me->getFirstName());
+        $socialNetworkUserProfile->setLastname($me->getLastName());
+        $socialNetworkUserProfile->setPicture($me->getPicture());
+        return $socialNetworkUserProfile;
     }
 
     /**

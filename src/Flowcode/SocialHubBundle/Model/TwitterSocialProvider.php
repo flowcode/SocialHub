@@ -1,7 +1,5 @@
 <?php
-
 namespace Flowcode\SocialHubBundle\Model;
-
 
 use Abraham\TwitterOAuth\TwitterOAuth;
 use Facebook\Exceptions\FacebookResponseException;
@@ -17,6 +15,7 @@ class TwitterSocialProvider implements SocialProvider
     const PROVIDER_TYPE = 'twitter';
 
     private $config;
+
     /**
      * @var TwitterOAuth
      */
@@ -40,7 +39,6 @@ class TwitterSocialProvider implements SocialProvider
     {
         $this->container = $container;
     }
-
 
     /**
      * Check if it is valid or not.
@@ -71,7 +69,7 @@ class TwitterSocialProvider implements SocialProvider
     /**
      * Get the profile of current user.
      */
-    public function getUserProfile($params = array())
+    public function getUserProfile($params = array()): SocialNetworkUserProfile
     {
         $access_token = $this->getConnection()->oauth("oauth/access_token", array(
             "oauth_token" => $_GET['oauth_token'],
@@ -85,12 +83,14 @@ class TwitterSocialProvider implements SocialProvider
             "include_email" => "true",
         ));
 
-        return array(
-            'id' => $response->id,
-            'email' => (isset($response->email)) ? $response->email : $response->screen_name,
-            'firstname' => null,
-            'lastname' => null,
-        );
+        $email = (isset($response->email)) ? $response->email : $response->screen_name;
+        $socialNetworkUserProfile = new SocialNetworkUserProfile();
+        $socialNetworkUserProfile->setId($response->id);
+        $socialNetworkUserProfile->setEmail($email);
+        $socialNetworkUserProfile->setFirstname(null);
+        $socialNetworkUserProfile->setLastname(null);
+        $socialNetworkUserProfile->setPicture(null);
+        return $socialNetworkUserProfile;
     }
 
     /**
@@ -144,7 +144,6 @@ class TwitterSocialProvider implements SocialProvider
         }
     }
 
-
     /**
      * Get the app sdk.
      * @return TwitterOAuth isntance.
@@ -155,11 +154,9 @@ class TwitterSocialProvider implements SocialProvider
             $params = $this->getConfig();
 
             $this->connection = new TwitterOAuth(
-                $params['app_id'],
-                $params['app_secret']
+                $params['app_id'], $params['app_secret']
             );
         }
         return $this->connection;
     }
-
 }

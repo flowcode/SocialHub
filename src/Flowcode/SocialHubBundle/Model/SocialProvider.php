@@ -23,7 +23,7 @@ interface SocialProvider
     /**
      * Get the profile of current user.
      */
-    public function getUserProfile($params);
+    public function getUserProfile($params) : SocialNetworkUserProfile;
 
     /**
      * Get the token access.

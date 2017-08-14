@@ -54,7 +54,7 @@ class GoogleSocialProvider implements SocialProvider
     /**
      * Get the profile of current user.
      */
-    public function getUserProfile($params)
+    public function getUserProfile($params): SocialNetworkUserProfile
     {
         $accessToken = "";
         if (isset($params['access_token'])) {
@@ -62,7 +62,7 @@ class GoogleSocialProvider implements SocialProvider
         } else {
             $accessToken = $this->getAccessToken();
         }
-        $request = 'https://www.googleapis.com/oauth2/v1/tokeninfo?access_token=' . $accessToken;
+        $request = 'https://www.googleapis.com/oauth2/v1/userinfo?access_token=' . $accessToken;
         $opts = array(
             'http' => array(
                 'method' => "GET",
@@ -76,10 +76,16 @@ class GoogleSocialProvider implements SocialProvider
         } catch (Exception $e) {
             return array();
         }
-        return array(
-            'id' => $content['user_id'],
-            'email' => $content['email'],
-        );
+        $firstname = (isset($content['given_name'])) ? $content['given_name'] : null;
+        $lastname = (isset($content['family_name'])) ? $content['family_name'] : null;
+        $picture = (isset($content['picture'])) ? $content['picture'] : null;
+        $socialNetworkUserProfile = new SocialNetworkUserProfile();
+        $socialNetworkUserProfile->setId($content['id']);
+        $socialNetworkUserProfile->setEmail($content['email']);
+        $socialNetworkUserProfile->setFirstname($firstname);
+        $socialNetworkUserProfile->setLastname($lastname);
+        $socialNetworkUserProfile->setPicture($picture);
+        return $socialNetworkUserProfile;
     }
 
     /**
